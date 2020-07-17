@@ -14,8 +14,7 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           go-version: '1.14'
-      - run: cd maint && go get
-      - run: go run maint/main.go > rakudo-releases.v1.csv.new
+      - run: cd maint && go run main.go > ../rakudo-releases.v1.csv.new
       - run: bash maint/update.sh
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
