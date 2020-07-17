@@ -59,6 +59,7 @@ func run() error {
 		return err
 	}
 	req.Close = true
+	req.Header.Set("User-Agent", "https://github.com/skaji/rakudo-releases")
 	res, err := (&http.Client{Timeout: 10 * time.Second}).Do(req)
 	if err != nil {
 		return err
