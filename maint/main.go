@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -68,6 +69,9 @@ func run() error {
 	res.Body.Close()
 	if err != nil {
 		return err
+	}
+	if res.StatusCode != http.StatusOK {
+		return errors.New(res.Status)
 	}
 	var entries Entries
 	if err := json.Unmarshal(body, &entries); err != nil {
