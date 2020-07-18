@@ -14,17 +14,18 @@ import (
 )
 
 type Entry struct {
-	SortKey  string `json:"sort_key" csv:"sort_key"`   //
-	Arch     string `json:"arch" csv:"arch"`           // x86_64 / ""
-	Backend  string `json:"backend" csv:"backend"`     // moar / null
-	BuildRev int    `json:"build_rev" csv:"build_rev"` // 1 / 2 / null
-	Format   string `json:"format" csv:"format"`       // asc / tar.gz / zip
-	Latest   int    `json:"latest" csv:"latest"`       // 1 / 0
-	Name     string `json:"name" csv:"name"`           // rakudo
-	Platform string `json:"platform" csv:"platform"`   // linux / macos / win / src
-	Type     string `json:"type" csv:"type"`           // archive / sig
-	URL      string `json:"url" csv:"url"`             //
-	Version  string `json:"ver" csv:"ver"`             //
+	SortKey             string `json:"sort_key" csv:"sort_key"`   //
+	Arch                string `json:"arch" csv:"arch"`           // x86_64 / ""
+	Backend             string `json:"backend" csv:"backend"`     // moar / null
+	BuildRev            int    `json:"build_rev" csv:"build_rev"` // 1 / 2 / null
+	Format              string `json:"format" csv:"format"`       // asc / tar.gz / zip
+	Latest              int    `json:"latest" csv:"latest"`       // 1 / 0
+	Name                string `json:"name" csv:"name"`           // rakudo
+	Platform            string `json:"platform" csv:"platform"`   // linux / macos / win / src
+	Type                string `json:"type" csv:"type"`           // archive / sig
+	URL                 string `json:"url" csv:"url"`             //
+	Version             string `json:"ver" csv:"ver"`             //
+	VersionWithBuildRev string `json:"ver_with_build_rev" csv:"ver_with_build_rev"`
 }
 
 type Entries []*Entry
@@ -80,6 +81,7 @@ func run() error {
 	sort.Stable(entries)
 	for i, e := range entries {
 		e.SortKey = fmt.Sprintf("%04d", i)
+		e.VersionWithBuildRev = fmt.Sprintf("%s-%02d", e.Version, e.BuildRev)
 	}
 	b, err := csvutil.Marshal(entries)
 	if err != nil {
