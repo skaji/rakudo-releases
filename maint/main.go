@@ -54,7 +54,7 @@ func (es Entries) Swap(i, j int) {
 	es[i], es[j] = es[j], es[i]
 }
 
-func run(typ string) error {
+func run() error {
 	req, err := http.NewRequest(http.MethodGet, "https://rakudo.org/dl/rakudo", nil)
 	if err != nil {
 		return err
@@ -73,35 +73,17 @@ func run(typ string) error {
 	if res.StatusCode != http.StatusOK {
 		return errors.New(res.Status)
 	}
-	var allEntries Entries
-	if err := json.Unmarshal(body, &allEntries); err != nil {
+	var entries Entries
+	if err := json.Unmarshal(body, &entries); err != nil {
 		return err
 	}
-	sort.Stable(allEntries)
-	var entries Entries
-	if typ == "prebuilt" {
-		sort := 1
-		for _, e := range allEntries {
-			if e.Platform != "src" {
-				e2 := new(Entry)
-				*e2 = *e
-				e2.Sort = fmt.Sprintf("%03d", sort)
-				e2.Key = fmt.Sprintf("rakudo-%s-%02d", e.Version, e.BuildRev)
-				entries = append(entries, e2)
-				sort++
-			}
-		}
-	} else {
-		sort := 1
-		for _, e := range allEntries {
-			if e.Platform == "src" {
-				e2 := new(Entry)
-				*e2 = *e
-				e2.Sort = fmt.Sprintf("%03d", sort)
-				e2.Key = fmt.Sprintf("rakudo-%s", e.Version)
-				entries = append(entries, e2)
-				sort++
-			}
+	sort.Stable(entries)
+	for i, e := range entries {
+		e.Sort = fmt.Sprintf("%04d", i)
+		if e.Platform == "src" {
+			e.Key = fmt.Sprintf("rakudo-%s", e.Version)
+		} else {
+			e.Key = fmt.Sprintf("rakudo-%s-%02d", e.Version, e.BuildRev)
 		}
 	}
 	b, err := csvutil.Marshal(entries)
@@ -113,11 +95,7 @@ func run(typ string) error {
 }
 
 func main() {
-	typ := "prebuilt"
-	if len(os.Args) > 1 {
-		typ = os.Args[1]
-	}
-	if err := run(typ); err != nil {
+	if err := run(); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
