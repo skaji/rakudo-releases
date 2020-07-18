@@ -14,18 +14,18 @@ import (
 )
 
 type Entry struct {
-	SortKey             string `json:"sort_key" csv:"sort_key"`   //
-	Arch                string `json:"arch" csv:"arch"`           // x86_64 / ""
-	Backend             string `json:"backend" csv:"backend"`     // moar / null
-	BuildRev            int    `json:"build_rev" csv:"build_rev"` // 1 / 2 / null
-	Format              string `json:"format" csv:"format"`       // asc / tar.gz / zip
-	Latest              int    `json:"latest" csv:"latest"`       // 1 / 0
-	Name                string `json:"name" csv:"name"`           // rakudo
-	Platform            string `json:"platform" csv:"platform"`   // linux / macos / win / src
-	Type                string `json:"type" csv:"type"`           // archive / sig
-	URL                 string `json:"url" csv:"url"`             //
-	Version             string `json:"ver" csv:"ver"`             //
-	VersionWithBuildRev string `json:"ver_with_build_rev" csv:"ver_with_build_rev"`
+	Sort     string `json:"sort" csv:"sort"`           //
+	Arch     string `json:"arch" csv:"arch"`           // x86_64 / ""
+	Backend  string `json:"backend" csv:"backend"`     // moar / null
+	BuildRev int    `json:"build_rev" csv:"build_rev"` // 1 / 2 / null
+	Format   string `json:"format" csv:"format"`       // asc / tar.gz / zip
+	Latest   int    `json:"latest" csv:"latest"`       // 1 / 0
+	Name     string `json:"name" csv:"name"`           // rakudo
+	Platform string `json:"platform" csv:"platform"`   // linux / macos / win / src
+	Type     string `json:"type" csv:"type"`           // archive / sig
+	URL      string `json:"url" csv:"url"`             //
+	Version  string `json:"ver" csv:"ver"`             //
+	Key      string `json:"key" csv:"key"`
 }
 
 type Entries []*Entry
@@ -48,14 +48,13 @@ func (es Entries) Less(i, j int) bool {
 		return es[i].BuildRev > es[j].BuildRev
 	}
 	return true
-
 }
 
 func (es Entries) Swap(i, j int) {
 	es[i], es[j] = es[j], es[i]
 }
 
-func run() error {
+func run(typ string) error {
 	req, err := http.NewRequest(http.MethodGet, "https://rakudo.org/dl/rakudo", nil)
 	if err != nil {
 		return err
@@ -74,14 +73,36 @@ func run() error {
 	if res.StatusCode != http.StatusOK {
 		return errors.New(res.Status)
 	}
-	var entries Entries
-	if err := json.Unmarshal(body, &entries); err != nil {
+	var allEntries Entries
+	if err := json.Unmarshal(body, &allEntries); err != nil {
 		return err
 	}
-	sort.Stable(entries)
-	for i, e := range entries {
-		e.SortKey = fmt.Sprintf("%04d", i)
-		e.VersionWithBuildRev = fmt.Sprintf("%s-%02d", e.Version, e.BuildRev)
+	sort.Stable(allEntries)
+	var entries Entries
+	if typ == "prebuilt" {
+		sort := 1
+		for _, e := range allEntries {
+			if e.Platform != "src" {
+				e2 := new(Entry)
+				*e2 = *e
+				e2.Sort = fmt.Sprintf("%03d", sort)
+				e2.Key = fmt.Sprintf("rakudo-%s-%02d", e.Version, e.BuildRev)
+				entries = append(entries, e2)
+				sort++
+			}
+		}
+	} else {
+		sort := 1
+		for _, e := range allEntries {
+			if e.Platform == "src" {
+				e2 := new(Entry)
+				*e2 = *e
+				e2.Sort = fmt.Sprintf("%03d", sort)
+				e2.Key = fmt.Sprintf("rakudo-%s", e.Version)
+				entries = append(entries, e2)
+				sort++
+			}
+		}
 	}
 	b, err := csvutil.Marshal(entries)
 	if err != nil {
@@ -92,7 +113,11 @@ func run() error {
 }
 
 func main() {
-	if err := run(); err != nil {
+	typ := "prebuilt"
+	if len(os.Args) > 1 {
+		typ = os.Args[1]
+	}
+	if err := run(typ); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
