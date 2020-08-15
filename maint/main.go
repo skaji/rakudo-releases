@@ -13,6 +13,8 @@ import (
 	"github.com/jszwec/csvutil"
 )
 
+const UserAgent = "Mozilla/5.0 (compatible; rakudo-releases; +https://github.com/skaji/rakudo-releases)"
+
 type Entry struct {
 	Sort     string `json:"sort" csv:"sort"`           //
 	Arch     string `json:"arch" csv:"arch"`           // x86_64 / ""
@@ -60,7 +62,7 @@ func run() error {
 		return err
 	}
 	req.Close = true
-	req.Header.Set("User-Agent", "https://github.com/skaji/rakudo-releases")
+	req.Header.Set("User-Agent", UserAgent)
 	res, err := (&http.Client{Timeout: 10 * time.Second}).Do(req)
 	if err != nil {
 		return err
