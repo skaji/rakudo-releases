@@ -9,7 +9,7 @@ if [[ -f $FILE ]]; then
   OLD_MD5=$(md5sum < $FILE)
 fi
 NEW_MD5=$(md5sum < $FILE.new)
-if [[ $OLD_MD5 != $NEW_MD5 ]]; then
+if [[ $OLD_MD5 = $NEW_MD5 ]]; then
   echo "There is no diff, exit"
   exit
 fi
