@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jszwec/csvutil"
@@ -16,7 +18,7 @@ import (
 const UserAgent = "Mozilla/5.0 (compatible; rakudo-releases; +https://github.com/skaji/rakudo-releases)"
 
 type Entry struct {
-	Sort     string `json:"sort" csv:"sort"`           //
+	SortKey  string `json:"sort_key" csv:"sort_key"`   //
 	Arch     string `json:"arch" csv:"arch"`           // x86_64 / ""
 	Backend  string `json:"backend" csv:"backend"`     // moar / null
 	BuildRev int    `json:"build_rev" csv:"build_rev"` // 1 / 2 / null
@@ -28,32 +30,28 @@ type Entry struct {
 	URL      string `json:"url" csv:"url"`             //
 	Version  string `json:"ver" csv:"ver"`             //
 	Key      string `json:"key" csv:"key"`
+	Padding  string `json:"padding" csv:"padding"`
 }
 
-type Entries []*Entry
-
-func (es Entries) Len() int {
-	return len(es)
+func (e *Entry) setSortKey() {
+	v := e.Version // 2020.08 or 2020.08.1
+	if len(v) < len("2020.08.1") {
+		v += ".0"
+	}
+	e.SortKey = strings.Join([]string{
+		string(e.Platform[0]),
+		string(e.Type[0]),
+		v,
+		strconv.Itoa(e.BuildRev),
+	}, "")
 }
 
-func (es Entries) Less(i, j int) bool {
-	if es[i].Platform != es[j].Platform {
-		return es[i].Platform > es[j].Platform
+func (e *Entry) setKey() {
+	if e.Platform == "src" {
+		e.Key = fmt.Sprintf("rakudo-%s", e.Version)
+	} else {
+		e.Key = fmt.Sprintf("rakudo-%s-%02d", e.Version, e.BuildRev)
 	}
-	if es[i].Type != es[j].Type {
-		return es[i].Type > es[j].Type
-	}
-	if es[i].Version != es[j].Version {
-		return es[i].Version > es[j].Version
-	}
-	if es[i].BuildRev != es[j].BuildRev {
-		return es[i].BuildRev > es[j].BuildRev
-	}
-	return true
-}
-
-func (es Entries) Swap(i, j int) {
-	es[i], es[j] = es[j], es[i]
 }
 
 func run() error {
@@ -75,19 +73,17 @@ func run() error {
 	if res.StatusCode != http.StatusOK {
 		return errors.New(res.Status)
 	}
-	var entries Entries
+	var entries []*Entry
 	if err := json.Unmarshal(body, &entries); err != nil {
 		return err
 	}
-	sort.Stable(entries)
-	for i, e := range entries {
-		e.Sort = fmt.Sprintf("%04d", i)
-		if e.Platform == "src" {
-			e.Key = fmt.Sprintf("rakudo-%s", e.Version)
-		} else {
-			e.Key = fmt.Sprintf("rakudo-%s-%02d", e.Version, e.BuildRev)
-		}
+	for _, e := range entries {
+		e.setSortKey()
+		e.setKey()
 	}
+	sort.Slice(entries, func(i, j int) bool {
+		return entries[j].SortKey < entries[i].SortKey
+	})
 	b, err := csvutil.Marshal(entries)
 	if err != nil {
 		return err
