@@ -18,19 +18,19 @@ import (
 const UserAgent = "Mozilla/5.0 (compatible; rakudo-releases; +https://github.com/skaji/rakudo-releases)"
 
 type Entry struct {
-	SortKey  string `json:"sort_key" csv:"sort_key"`   //
-	Arch     string `json:"arch" csv:"arch"`           // x86_64 / ""
-	Backend  string `json:"backend" csv:"backend"`     // moar / null
-	BuildRev int    `json:"build_rev" csv:"build_rev"` // 1 / 2 / null
-	Format   string `json:"format" csv:"format"`       // asc / tar.gz / zip
-	Latest   int    `json:"latest" csv:"latest"`       // 1 / 0
-	Name     string `json:"name" csv:"name"`           // rakudo
-	Platform string `json:"platform" csv:"platform"`   // linux / macos / win / src
-	Type     string `json:"type" csv:"type"`           // archive / sig
-	URL      string `json:"url" csv:"url"`             //
-	Version  string `json:"ver" csv:"ver"`             //
-	Key      string `json:"key" csv:"key"`
-	Padding  string `json:"padding" csv:"padding"`
+	SortKey                  string `json:"sort_key" csv:"sort_key"`   //
+	Arch                     string `json:"arch" csv:"arch"`           // x86_64 / ""
+	Backend                  string `json:"backend" csv:"backend"`     // moar / null
+	BuildRevision            int    `json:"build_rev" csv:"build_rev"` // 1 / 2 / null
+	Format                   string `json:"format" csv:"format"`       // asc / tar.gz / zip
+	Latest                   int    `json:"latest" csv:"latest"`       // 1 / 0
+	Name                     string `json:"name" csv:"name"`           // rakudo
+	Platform                 string `json:"platform" csv:"platform"`   // linux / macos / win / src
+	Type                     string `json:"type" csv:"type"`           // archive / sig
+	URL                      string `json:"url" csv:"url"`             //
+	Version                  string `json:"ver" csv:"ver"`             //
+	VersionWithBuildRevision string `json:"ver_with_build_rev" csv:"key"`
+	Padding                  string `json:"padding" csv:"padding"`
 }
 
 func (e *Entry) setSortKey() {
@@ -42,15 +42,15 @@ func (e *Entry) setSortKey() {
 		string(e.Platform[0]),
 		string(e.Type[0]),
 		v,
-		strconv.Itoa(e.BuildRev),
+		strconv.Itoa(e.BuildRevision),
 	}, "")
 }
 
-func (e *Entry) setKey() {
+func (e *Entry) setVersionWithBuildRevision() {
 	if e.Platform == "src" {
-		e.Key = fmt.Sprintf("rakudo-%s", e.Version)
+		e.VersionWithBuildRevision = fmt.Sprintf("%s", e.Version)
 	} else {
-		e.Key = fmt.Sprintf("rakudo-%s-%02d", e.Version, e.BuildRev)
+		e.VersionWithBuildRevision = fmt.Sprintf("%s-%02d", e.Version, e.BuildRevision)
 	}
 }
 
@@ -79,7 +79,7 @@ func run() error {
 	}
 	for _, e := range entries {
 		e.setSortKey()
-		e.setKey()
+		e.setVersionWithBuildRevision()
 	}
 	sort.Slice(entries, func(i, j int) bool {
 		return entries[j].SortKey < entries[i].SortKey
