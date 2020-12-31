@@ -1,4 +1,4 @@
-sort_key,arch,backend,build_rev,format,latest,name,platform,type,url,ver,key,padding
+sort_key,arch,backend,build_rev,format,latest,name,platform,type,url,ver,ver_with_build_rev,padding
 ws2020.12.01,x86_64,moar,1,asc,1,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2020.12-01-win-x86_64-msvc.zip.asc,2020.12,2020.12-01,
 ws2020.11.01,x86_64,moar,1,asc,0,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2020.11-01-win-x86_64-msvc.zip.asc,2020.11,2020.11-01,
 ws2020.10.01,x86_64,moar,1,asc,0,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2020.10-01-win-x86_64.zip.asc,2020.10,2020.10-01,

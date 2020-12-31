@@ -29,7 +29,7 @@ type Entry struct {
 	Type                     string `json:"type" csv:"type"`           // archive / sig
 	URL                      string `json:"url" csv:"url"`             //
 	Version                  string `json:"ver" csv:"ver"`             //
-	VersionWithBuildRevision string `json:"ver_with_build_rev" csv:"key"`
+	VersionWithBuildRevision string `json:"ver_with_build_rev" csv:"ver_with_build_rev"`
 	Padding                  string `json:"padding" csv:"padding"`
 }
 
