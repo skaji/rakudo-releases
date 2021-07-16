@@ -1,4 +1,5 @@
 sort_key,arch,backend,build_rev,format,latest,name,platform,type,url,ver,ver_with_build_rev,padding
+ws2021.06.01,x86_64,moar,1,asc,1,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2021.06-01-win-x86_64-msvc.msi.asc,2021.06,2021.06-01,
 ws2021.06.01,x86_64,moar,1,asc,1,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2021.06-01-win-x86_64-msvc.zip.asc,2021.06,2021.06-01,
 ws2021.05.01,x86_64,moar,1,asc,0,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2021.05-01-win-x86_64-msvc.zip.asc,2021.05,2021.05-01,
 ws2021.04.01,x86_64,moar,1,asc,0,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2021.04-01-win-x86_64-msvc.zip.asc,2021.04,2021.04-01,
@@ -18,6 +19,7 @@ ws2020.02.12,x86_64,moar,2,asc,0,rakudo,win,sig,https://rakudo.org/dl/rakudo/rak
 ws2020.02.11,x86_64,moar,1,asc,0,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2020.02.1-01-win-x86_64.zip.asc,2020.02.1,2020.02.1-01,
 ws2020.01.01,x86_64,moar,1,asc,0,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2020.01-01-win-x86_64.zip.asc,2020.01,2020.01-01,
 ws2019.11.01,x86_64,moar,1,asc,0,rakudo,win,sig,https://rakudo.org/dl/rakudo/rakudo-moar-2019.11-01-win-x86_64.zip.asc,2019.11,2019.11-01,
+wi2021.06.01,x86_64,moar,1,msi,1,rakudo,win,installer,https://rakudo.org/dl/rakudo/rakudo-moar-2021.06-01-win-x86_64-msvc.msi,2021.06,2021.06-01,
 wa2021.06.01,x86_64,moar,1,zip,1,rakudo,win,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2021.06-01-win-x86_64-msvc.zip,2021.06,2021.06-01,
 wa2021.05.01,x86_64,moar,1,zip,0,rakudo,win,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2021.05-01-win-x86_64-msvc.zip,2021.05,2021.05-01,
 wa2021.04.01,x86_64,moar,1,zip,0,rakudo,win,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2021.04-01-win-x86_64-msvc.zip,2021.04,2021.04-01,
