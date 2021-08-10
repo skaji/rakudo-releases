@@ -20,4 +20,4 @@ git config --global user.email '41898282+github-actions[bot]@users.noreply.githu
 git add $FILE
 MESSAGE='auto update'
 git commit -m "$MESSAGE"
-git push https://skaji:$GITHUB_TOKEN@github.com/skaji/rakudo-releases.git master
+git push https://skaji:$GITHUB_TOKEN@github.com/skaji/rakudo-releases.git main
