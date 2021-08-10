@@ -38,8 +38,13 @@ func (e *Entry) setSortKey() {
 	if len(v) < len("2020.08.1") {
 		v += ".0"
 	}
+	arch := "_"
+	if e.Arch != "" {
+		arch = string(e.Arch[0])
+	}
 	e.SortKey = strings.Join([]string{
 		string(e.Platform[0]),
+		string(arch),
 		string(e.Type[0]),
 		v,
 		strconv.Itoa(e.BuildRevision),
