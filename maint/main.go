@@ -23,7 +23,6 @@ type Entry struct {
 	Backend                  string `json:"backend" csv:"backend"`     // moar / null
 	BuildRevision            int    `json:"build_rev" csv:"build_rev"` // 1 / 2 / null
 	Format                   string `json:"format" csv:"format"`       // asc / tar.gz / zip
-	Latest                   int    `json:"latest" csv:"latest"`       // 1 / 0
 	Name                     string `json:"name" csv:"name"`           // rakudo
 	Platform                 string `json:"platform" csv:"platform"`   // linux / macos / win / src
 	Type                     string `json:"type" csv:"type"`           // archive / sig
