@@ -86,6 +86,9 @@ func run() error {
 		e.setVersionWithBuildRevision()
 	}
 	sort.Slice(entries, func(i, j int) bool {
+		if entries[j].SortKey == entries[i].SortKey {
+			return entries[j].URL < entries[i].URL
+		}
 		return entries[j].SortKey < entries[i].SortKey
 	})
 	b, err := csvutil.Marshal(entries)
