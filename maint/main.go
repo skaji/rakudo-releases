@@ -37,17 +37,11 @@ func (e *Entry) setSortKey() {
 	if len(v) < len("2020.08.1") {
 		v += ".0"
 	}
-	arch := "_"
-	if e.Arch != "" {
-		arch = string(e.Arch[0])
-	}
 	e.SortKey = strings.Join([]string{
-		string(e.Platform[0]),
-		string(arch),
-		string(e.Type[0]),
-		v,
-		strconv.Itoa(e.BuildRevision),
-	}, "")
+		v + strconv.Itoa(e.BuildRevision),
+		e.Platform,
+		e.Arch,
+	}, "-")
 }
 
 func (e *Entry) setVersionWithBuildRevision() {
@@ -56,6 +50,30 @@ func (e *Entry) setVersionWithBuildRevision() {
 	} else {
 		e.VersionWithBuildRevision = fmt.Sprintf("%s-%02d", e.Version, e.BuildRevision)
 	}
+}
+
+type Entries []*Entry
+
+func (es Entries) Filter() Entries {
+	var out Entries
+	for _, e := range es {
+		if e.Format != "txt" && e.Format != "asc" && e.Platform != "src" && e.Type != "installer" {
+			out = append(out, e)
+		}
+	}
+	return out
+}
+
+func (es Entries) Sort() Entries {
+	out := make(Entries, len(es))
+	copy(out, es)
+	sort.Slice(out, func(i, j int) bool {
+		if out[j].SortKey == out[i].SortKey {
+			return out[j].URL < out[i].URL
+		}
+		return out[j].SortKey < out[i].SortKey
+	})
+	return out
 }
 
 func run() error {
@@ -77,20 +95,16 @@ func run() error {
 	if res.StatusCode/100 != 2 {
 		return errors.New(res.Status)
 	}
-	var entries []*Entry
+	var entries Entries
 	if err := json.Unmarshal(body, &entries); err != nil {
 		return err
 	}
+	entries = entries.Filter()
 	for _, e := range entries {
 		e.setSortKey()
 		e.setVersionWithBuildRevision()
 	}
-	sort.Slice(entries, func(i, j int) bool {
-		if entries[j].SortKey == entries[i].SortKey {
-			return entries[j].URL < entries[i].URL
-		}
-		return entries[j].SortKey < entries[i].SortKey
-	})
+	entries = entries.Sort()
 	b, err := csvutil.Marshal(entries)
 	if err != nil {
 		return err
