@@ -1,5 +1,5 @@
 module github.com/skaji/rakudo-releases/maint
 
-go 1.17
+go 1.19
 
-require github.com/jszwec/csvutil v1.6.0
+require github.com/jszwec/csvutil v1.7.1
