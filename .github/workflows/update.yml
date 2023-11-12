@@ -2,16 +2,16 @@ name: update
 
 on:
   schedule:
-    - cron: '13 * * * *'
+    - cron: '13 1 * * *'
 
 jobs:
   go:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: main
-      - uses: actions/setup-go@v3
+      - uses: actions/setup-go@v4
         with:
           go-version-file: maint/go.mod
       - run: cd maint && go run main.go > ../rakudo-releases.v1.csv.new
