@@ -14,6 +14,7 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version-file: maint/go.mod
+          cache-dependency-path: maint/go.sum
       - run: cd maint && go run main.go > ../rakudo-releases.v1.csv.new
       - run: bash maint/update.sh rakudo-releases.v1.csv
         env:
