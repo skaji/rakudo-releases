@@ -1,13 +1,14 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"sort"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -65,25 +66,24 @@ func (es Entries) Filter() Entries {
 }
 
 func (es Entries) Sort() Entries {
-	out := make(Entries, len(es))
-	copy(out, es)
-	sort.Slice(out, func(i, j int) bool {
-		if out[j].SortKey == out[i].SortKey {
-			return out[j].URL < out[i].URL
+	out := slices.Clone(es)
+	slices.SortFunc(out, func(a, b *Entry) int {
+		if a.SortKey != b.SortKey {
+			return strings.Compare(b.SortKey, a.SortKey)
 		}
-		return out[j].SortKey < out[i].SortKey
+		return strings.Compare(b.URL, a.URL)
 	})
 	return out
 }
 
-func run() error {
-	req, err := http.NewRequest(http.MethodGet, "https://rakudo.org/dl/rakudo", nil)
+func run(ctx context.Context) error {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://rakudo.org/dl/rakudo", nil)
 	if err != nil {
 		return err
 	}
 	req.Close = true
 	req.Header.Set("User-Agent", UserAgent)
-	res, err := (&http.Client{Timeout: 10 * time.Second}).Do(req)
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -114,7 +114,9 @@ func run() error {
 }
 
 func main() {
-	if err := run(); err != nil {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := run(ctx); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
