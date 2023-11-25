@@ -1,8 +1,4 @@
 sort_key,arch,backend,build_rev,format,name,platform,type,url,ver,ver_with_build_rev,padding
-2023.11.01-win-x86_64,x86_64,moar,1,zip,rakudo,win,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2023.11-01-win-x86_64-msvc.zip,2023.11,2023.11-01,
-2023.11.01-macos-x86_64,x86_64,moar,1,tar.gz,rakudo,macos,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2023.11-01-macos-x86_64-clang.tar.gz,2023.11,2023.11-01,
-2023.11.01-macos-arm64,arm64,moar,1,tar.gz,rakudo,macos,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2023.11-01-macos-arm64-clang.tar.gz,2023.11,2023.11-01,
-2023.11.01-linux-x86_64,x86_64,moar,1,tar.gz,rakudo,linux,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2023.11-01-linux-x86_64-gcc.tar.gz,2023.11,2023.11-01,
 2023.10.02-win-x86_64,x86_64,moar,2,zip,rakudo,win,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2023.10-02-win-x86_64-msvc.zip,2023.10,2023.10-02,
 2023.10.02-macos-x86_64,x86_64,moar,2,tar.gz,rakudo,macos,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2023.10-02-macos-x86_64-clang.tar.gz,2023.10,2023.10-02,
 2023.10.02-macos-arm64,arm64,moar,2,tar.gz,rakudo,macos,archive,https://rakudo.org/dl/rakudo/rakudo-moar-2023.10-02-macos-arm64-clang.tar.gz,2023.10,2023.10-02,
