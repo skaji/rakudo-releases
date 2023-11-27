@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"os"
 	"slices"
 	"strconv"
@@ -87,6 +88,13 @@ func run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	{
+		b, err := httputil.DumpResponse(res, false)
+		if err != nil {
+			return err
+		}
+		fmt.Fprint(os.Stderr, string(b))
+	}
 	body, err := io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
@@ -99,6 +107,7 @@ func run(ctx context.Context) error {
 	if err := json.Unmarshal(body, &entries); err != nil {
 		return err
 	}
+	fmt.Fprintln(os.Stderr, "---> response json array size", len(entries))
 	entries = entries.Filter()
 	for _, e := range entries {
 		e.setSortKey()
