@@ -110,6 +110,7 @@ func run(ctx context.Context) error {
 	fmt.Fprintln(os.Stderr, "---> response json array size", len(entries))
 	entries = entries.Filter()
 	for _, e := range entries {
+		e.URL = strings.Replace(e.URL, "http://", "https://", 1)
 		e.setSortKey()
 		e.setVersionWithBuildRevision()
 	}
