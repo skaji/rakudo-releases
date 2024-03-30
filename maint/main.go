@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"slices"
 	"strconv"
@@ -17,7 +16,10 @@ import (
 	"github.com/jszwec/csvutil"
 )
 
-const UserAgent = "Mozilla/5.0 (compatible; rakudo-releases; +https://github.com/skaji/rakudo-releases)"
+const (
+	URL       = "https://rakudo.org/dl/rakudo"
+	UserAgent = "Mozilla/5.0 (compatible; rakudo-releases; +https://github.com/skaji/rakudo-releases)"
+)
 
 type Entry struct {
 	SortKey                  string `json:"sort_key" csv:"sort_key"`   //
@@ -77,40 +79,39 @@ func (es Entries) Sort() Entries {
 	return out
 }
 
-func run(ctx context.Context) error {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://rakudo.org/dl/rakudo", nil)
+func httpGet(ctx context.Context, url string) ([]byte, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	req.Close = true
 	req.Header.Set("User-Agent", UserAgent)
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return err
-	}
-	{
-		b, err := httputil.DumpResponse(res, false)
-		if err != nil {
-			return err
-		}
-		fmt.Fprint(os.Stderr, string(b))
+		return nil, err
 	}
 	body, err := io.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if res.StatusCode/100 != 2 {
-		return errors.New(res.Status)
+		return nil, errors.New(res.Status)
+	}
+	return body, nil
+}
+
+func run(ctx context.Context) error {
+	body, err := httpGet(ctx, URL)
+	if err != nil {
+		return err
 	}
 	var entries Entries
 	if err := json.Unmarshal(body, &entries); err != nil {
 		return err
 	}
-	fmt.Fprintln(os.Stderr, "---> response json array size", len(entries))
 	entries = entries.Filter()
 	for _, e := range entries {
-		e.URL = strings.Replace(e.URL, "http://", "https://", 1)
 		e.setSortKey()
 		e.setVersionWithBuildRevision()
 	}
