@@ -120,6 +120,9 @@ func run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	if strings.HasPrefix(entries[0].URL, "http://") {
+		return fmt.Errorf("error: non-https url found, %s", entries[0].URL)
+	}
 	fmt.Print(string(b))
 	return nil
 }
